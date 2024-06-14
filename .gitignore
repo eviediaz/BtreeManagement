@@ -30,3 +30,14 @@
 *.exe
 *.out
 *.app
+
+# registry files
+*.bin
+*.index
+
+# Directories
+.vs/
+x64/
+
+# Files
+*.user

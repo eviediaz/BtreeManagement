@@ -1,0 +1,62 @@
+#pragma once
+
+#ifndef BTREE_DISK_NODE
+#define BTREE_DISK_NODE
+
+#include <cmath> // for ceiling and floor values
+
+namespace APP_CORE
+{
+	namespace DISK
+	{
+        // use odd orders
+        template<class T, int BTREE_ORDER>
+        struct Node 
+        {
+            Node() {}
+
+            long page_id{ -1 };
+            long count{ 0 };
+            long right{ 0 };
+
+            T data[BTREE_ORDER + 1];
+            long children[BTREE_ORDER + 2];
+
+
+            Node(long page_id) : page_id{ page_id } {
+                count = 0;
+                // load ' BtreeOrder + 2 ' children with 0
+                for (int i = 0; i < BTREE_ORDER + 2; i++) {
+                    children[i] = 0;
+                }
+            }
+
+            void insert_in_node(int pos, const T& value) {
+                int j = count;
+                while (j > pos) {
+                    data[j] = data[j - 1];
+                    children[j + 1] = children[j];
+                    j--;
+                }
+                data[j] = value;
+                children[j + 1] = children[j];
+
+                count++;
+            }
+
+            void delete_in_node(int pos) {
+                for (int i = pos; i < count; i++) {
+                    data[i] = data[i + 1];
+                    children[i + 1] = children[i + 2];
+                }
+                count--;
+            }
+
+            bool is_overflow() { return count > BTREE_ORDER; }
+
+            bool is_underflow() { return count < floor(BTREE_ORDER / 2.0); }
+        };
+	}
+}
+
+#endif // !BTREE_DISK_NODE
